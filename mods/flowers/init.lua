@@ -89,18 +89,29 @@ minetest.register_abm({
 		end
 
 		local light = minetest.get_node_light(pos)
+		local maxlight = minetest.get_node_light(pos, 0.5)
 		if not light or light < 13 then
+			return
+		end
+		if not maxlight or maxlight < 9 then -- if light is never 9 or more, the flower dies.
+			minetest.remove_node(pos)
 			return
 		end
 
 		local pos0 = {x = pos.x - 4, y = pos.y - 4, z = pos.z - 4}
 		local pos1 = {x = pos.x + 4, y = pos.y + 4, z = pos.z + 4}
 		if #minetest.find_nodes_in_area(pos0, pos1, "group:flora_block") > 0 then
+			if math.random(3) == 1 then
+				minetest.remove_node(pos)
+			end
 			return
 		end
 
 		local flowers = minetest.find_nodes_in_area(pos0, pos1, "group:flora")
 		if #flowers > 3 then
+			if math.random(5) == 1 then -- flower may suffer from overcrowding
+				minetest.remove_node(pos)
+			end
 			return
 		end
 
